@@ -1,0 +1,15 @@
+{
+  "name": "claude-cc",
+  "version": "1.0.0",
+  "description": "Auto-resume Claude Code sessions per git branch",
+  "bin": {
+    "cc": "./bin/cc"
+  },
+  "scripts": {},
+  "keywords": ["claude", "claude-code", "ai", "git"],
+  "author": "Matias Paterlini <paterlinimatias@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  }
+}
