@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+if ! command -v claude &>/dev/null; then
+  echo "Claude Code is not installed. Install it with:"
+  echo ""
+  echo "  npm install -g @anthropic-ai/claude-code"
+  echo ""
+  exit 1
+fi
+
+branch=$(git branch --show-current 2>/dev/null)
+if [ -z "$branch" ]; then
+  claude "$@"
+  exit $?
+fi
+
+project_key=$(pwd | sed 's|/|-|g')
+project_dir="$HOME/.claude/projects/${project_key}"
+
+if [ ! -d "$project_dir" ]; then
+  echo "New session for branch: $branch"
+  claude "$@"
+  exit $?
+fi
+
+result=$(CC_BRANCH="$branch" CC_PROJECT_DIR="$project_dir" python3 << 'PYEOF'
+import json, glob, os
+
+branch = os.environ.get("CC_BRANCH", "")
+project_dir = os.environ.get("CC_PROJECT_DIR", "")
+
+best_session = ""
+best_ts = ""
+
+for f in glob.glob(os.path.join(project_dir, "*.jsonl")):
+    sid = os.path.basename(f).replace(".jsonl", "")
+    first_branch = None
+    last_ts = None
+    for line in open(f):
+        try:
+            d = json.loads(line)
+            if d.get("type") == "user" and "gitBranch" in d:
+                if first_branch is None:
+                    first_branch = d["gitBranch"]
+                last_ts = d.get("timestamp", "")
+        except:
+            continue
+    if first_branch == branch and last_ts:
+        if last_ts > best_ts:
+            best_ts = last_ts
+            best_session = sid
+
+if best_session:
+    print(best_session)
+PYEOF
+)
+
+if [ -n "$result" ]; then
+  echo "Resuming session for branch: $branch"
+  claude --resume "$result" "$@"
+else
+  echo "New session for branch: $branch"
+  claude "$@"
+fi
