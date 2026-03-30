@@ -23,41 +23,46 @@ if [ ! -d "$project_dir" ]; then
   exit $?
 fi
 
-result=$(CC_BRANCH="$branch" CC_PROJECT_DIR="$project_dir" python3 << 'PYEOF'
-import json, glob, os
+# Extract a JSON string field value from a line: extract_field <line> <fieldname>
+extract_field() {
+  printf '%s' "$1" \
+    | grep -oE "\"$2\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" \
+    | grep -oE '"[^"]*"$' \
+    | tr -d '"'
+}
 
-branch = os.environ.get("CC_BRANCH", "")
-project_dir = os.environ.get("CC_PROJECT_DIR", "")
+best_session=""
+best_ts=""
 
-best_session = ""
-best_ts = ""
+for f in "$project_dir"/*.jsonl; do
+  [ -f "$f" ] || continue
+  sid=$(basename "$f" .jsonl)
+  first_branch=""
+  last_ts=""
 
-for f in glob.glob(os.path.join(project_dir, "*.jsonl")):
-    sid = os.path.basename(f).replace(".jsonl", "")
-    first_branch = None
-    last_ts = None
-    for line in open(f):
-        try:
-            d = json.loads(line)
-            if d.get("type") == "user" and "gitBranch" in d:
-                if first_branch is None:
-                    first_branch = d["gitBranch"]
-                last_ts = d.get("timestamp", "")
-        except:
-            continue
-    if first_branch == branch and last_ts:
-        if last_ts > best_ts:
-            best_ts = last_ts
-            best_session = sid
+  while IFS= read -r line; do
+    # Skip lines that are not user messages or lack gitBranch
+    echo "$line" | grep -qF '"type"' || continue
+    [ "$(extract_field "$line" "type")" = "user" ] || continue
+    gb=$(extract_field "$line" "gitBranch")
+    [ -n "$gb" ] || continue
 
-if best_session:
-    print(best_session)
-PYEOF
-)
+    [ -n "$first_branch" ] || first_branch="$gb"
+    ts=$(extract_field "$line" "timestamp")
+    [ -n "$ts" ] && last_ts="$ts"
+  done < "$f"
 
-if [ -n "$result" ]; then
+  if [ "$first_branch" = "$branch" ] && [ -n "$last_ts" ]; then
+    if [[ "$last_ts" > "$best_ts" ]]; then
+      best_ts="$last_ts"
+      best_session="$sid"
+    fi
+  fi
+done
+
+if [ -n "$best_session" ]; then
   echo "Resuming session for branch: $branch"
-  claude --resume "$result" "$@"
+  claude --resume "$best_session" "$@"
 else
   echo "New session for branch: $branch"
   claude "$@"
