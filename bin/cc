@@ -3,7 +3,7 @@
 if ! command -v claude &>/dev/null; then
   echo "Claude Code is not installed. Install it with:"
   echo ""
-  echo "  npm install -g @anthropic-ai/claude-code"
+  echo "  curl -fsSL https://claude.ai/install.sh | bash"
   echo ""
   exit 1
 fi

@@ -20,7 +20,7 @@
 npm install -g claude-cc
 ```
 
-Requires [`claude`](https://claude.ai/code) and `python3`.
+Requires [`claude`](https://claude.ai/code) (`curl -fsSL https://claude.ai/install.sh | bash`) and `python3`.
 
 ---
 
