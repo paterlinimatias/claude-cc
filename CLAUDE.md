@@ -1,10 +1,10 @@
-# claude-cc
+# Claude Code Context (claude-cc)
 
 Auto-resume Claude Code sessions per git branch.
 
 ## Architecture
 
-Single bash script (`bin/cc`) with an embedded Python snippet for JSONL parsing. Zero npm dependencies — only requires `bash`, `python3`, and the `claude` CLI.
+Single bash script (`bin/ccc`) with an embedded Python snippet for JSONL parsing. Zero npm dependencies — only requires `bash`, `python3`, and the `claude` CLI.
 
 ## How session lookup works
 
@@ -20,7 +20,7 @@ Sessions are matched by where they **started**, not where they last ran.
 
 ```bash
 npm install -g .   # install from local path
-cc                 # run from any git repo
+ccc                # run from any git repo
 ```
 
 ## Publishing
@@ -32,5 +32,5 @@ npm publish        # requires npm login
 ## Key decisions
 
 - **Python for JSON parsing** — bash alone can't reliably parse JSONL; python3 stdlib handles it cleanly without adding dependencies
-- **Fallback behavior** — outside a git repo or when no session exists, `cc` passes through to `claude "$@"` unchanged
+- **Fallback behavior** — outside a git repo or when no session exists, `ccc` passes through to `claude "$@"` unchanged
 - **First-branch matching** — a session belongs to the branch where it started, not the last branch seen in the conversation

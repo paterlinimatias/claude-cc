@@ -1,4 +1,4 @@
-# claude-cc
+# Claude Code Context
 
 [![npm version](https://img.shields.io/npm/v/claude-cc.svg)](https://www.npmjs.com/package/claude-cc)
 [![npm downloads](https://img.shields.io/npm/dm/claude-cc.svg)](https://www.npmjs.com/package/claude-cc)
@@ -6,7 +6,7 @@
 
 > Auto-resume Claude Code sessions per git branch.
 
-`cc` wraps the [Claude Code](https://claude.ai/code) CLI and automatically resumes the last session for your current branch — so switching branches never loses your context.
+`ccc` wraps the [Claude Code](https://claude.ai/code) CLI and automatically resumes the last session for your current branch — so switching branches never loses your context.
 
 ---
 
@@ -26,23 +26,23 @@ Requires [`claude`](https://claude.ai/code) (`curl -fsSL https://claude.ai/insta
 
 ## Usage
 
-Use `cc` instead of `claude`:
+Use `ccc` instead of `claude`:
 
 ```bash
 $ git checkout feature/a
-$ cc
+$ ccc
 Resuming session for branch: feature/a
 
 $ git checkout feature/b
-$ cc
+$ ccc
 Resuming session for branch: feature/b
 
 $ git checkout -b feature/c
-$ cc
+$ ccc
 Starting new session for branch: feature/c
 ```
 
-Each branch gets its own session. `cc` accepts the same flags as `claude` — outside a git repo it behaves identically.
+Each branch gets its own session. `ccc` accepts the same flags as `claude` — outside a git repo it behaves identically.
 
 ---
 

@@ -1,11 +1,13 @@
 {
   "name": "claude-cc",
-  "version": "1.0.1",
-  "description": "Auto-resume Claude Code sessions per git branch",
+  "version": "2.0.0",
+  "description": "Claude Code Context — auto-resume sessions per git branch",
   "bin": {
-    "cc": "bin/cc"
+    "ccc": "bin/ccc"
   },
-  "scripts": {},
+  "scripts": {
+    "postinstall": "node postinstall.js"
+  },
   "keywords": [
     "claude",
     "claude-code",
