@@ -10,7 +10,7 @@
 
 ---
 
-![demo](https://raw.githubusercontent.com/paterlinimatias/claude-cc/master/demo_v2.gif)
+![demo](https://raw.githubusercontent.com/paterlinimatias/claude-cc/master/demo.gif)
 
 ---
 
