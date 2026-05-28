@@ -36,15 +36,16 @@ for f in glob.glob(os.path.join(project_dir, "*.jsonl")):
     sid = os.path.basename(f).replace(".jsonl", "")
     first_branch = None
     last_ts = None
-    for line in open(f):
-        try:
-            d = json.loads(line)
-            if d.get("type") == "user" and "gitBranch" in d:
-                if first_branch is None:
-                    first_branch = d["gitBranch"]
-                last_ts = d.get("timestamp", "")
-        except:
-            continue
+    with open(f, 'r') as fh:
+        for line in fh:
+            try:
+                d = json.loads(line)
+                if d.get("type") == "user" and "gitBranch" in d:
+                    if first_branch is None:
+                        first_branch = d["gitBranch"]
+                    last_ts = d.get("timestamp", "")
+            except:
+                continue
     if first_branch == branch and last_ts:
         if last_ts > best_ts:
             best_ts = last_ts
